@@ -1,5 +1,6 @@
 
 import java.util.Scanner;
+import java.util.Random;
 /**
  * This is the main class for adsb decoding.
  * @author Evan
@@ -18,13 +19,14 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+	Random rand = new Random();
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter an adsb code: ");
         String adsbIn = sc.next();
         char[] adsbArr = adsbIn.toCharArray();
         Integer[] adsbHex = new Integer[28]; 
         //Integer.parseInt(adsbIn, 16);
-        for(int i = 0; i<adsbArr.length; i++){
+        for(int i = 0; i< adsbArr.length; i++){
             String temp = String.valueOf(adsbArr[i]);
             adsbHex[i] = Integer.parseInt(temp, 16);
             System.out.println(adsbHex[i]);//for testing purposes
@@ -62,7 +64,9 @@ public class Main {
             }
         }
         System.out.println(df+"\n"+icao+"\n"+data+"\n"+parity);
-        System.out.println("DF: "+getDf(adsbIn)+"\nCA: "+getCa(adsbIn));//8dac85839909dc1198a416e9d120
+        System.out.println("DF: "+getDf(adsbIn)+"\nCA: "+getCa(adsbIn)+"\nDatatype: "+"TODO...FIX THIS"+"\nParity: "+"TODO...FIX THIS TOO");//getDatatype(adsbIn)+"\nParity: "+getParity(adsbIn));
+	System.out.println("Datatype test: " + whatDatatype(rand.nextInt(30)+1));// 1-31 random nums 	
+	//8dac85839909dc1198a416e9d120
                 //+"\nDatatype: "+getDatatype(adsbIn)); +"\nParity: "+getParity(adsbIn));
         
     }
@@ -140,7 +144,12 @@ public class Main {
                 
         }
     }
-    private static int getDf(String hexDf){
+
+    public static int getDf(String hexDf){
+	return decDf(hexDf);
+    }
+
+    private static int decDf(String hexDf){
         char[] temp = hexDf.toCharArray();
         String[] stringTemp = new String[2];// NOTE: char 1 and 2 are bits 1-8 
         String dfStr = "";
@@ -157,8 +166,10 @@ public class Main {
         
         return(Integer.parseInt(dfStr.substring(0, 5), 2));//creates a substring of dfStr to truncate the string to the first 5 bits of the 8 bits
     }
-    
-    private static int getCa(String hexDf){
+    public static int getCa(String hexDf){
+	return decCa(hexDf);
+    }
+    private static int decCa(String hexDf){
         char[] temp = hexDf.toCharArray();
         String[] stringTemp = new String[2];
         for(int i = 0; i < stringTemp.length; i++){
@@ -178,11 +189,16 @@ public class Main {
     }
     */
     //TODO: FIX THE OTHERS
-    private static int getDatatype(String hexData){//TODO FIX THIS, DATA is bits 33-88 and the datatype is the first 5 of those bits (33-37)
-        char[] temp = hexData.toCharArray();
-        String[] stringTemp = new String[2];
+    
+    public static int getDatatype(String hexData){
+	    return decDatatype(hexData);
+    }
+
+    private static int decDatatype(String hexData){//TODO FIX THIS, DATA is bits 33-88 and the datatype is the first 5 of those bits (33-37)
+        char[] temp = hexData.toCharArray();//also this might be a problem too
+        String[] stringTemp = new String[56];//this might need some tweaking.
         int g = 0;
-        for(int i = 32; i < 32+stringTemp.length; i++){//data starts at 32 and goes to 87, the data type is the first 5 bits, so this splits two hex values
+        for(int i = 4; i < 11+stringTemp.length; i++){//data starts at 32 and goes to 87, the data type is the first 5 bits, so this splits two hex values
             
             stringTemp[g] = getHex(String.valueOf(temp[i]));
             //df[i] = Integer.parseInt(stringTemp, 1);
@@ -198,10 +214,14 @@ public class Main {
     /*
     TODO: methods for each data type
     */
-    private static int getParity(String hexParity){
+    public static int getParity(String hexParity){
+	    return decParity(hexParity);
+    }
+
+    private static int decParity(String hexParity){
         char[] temp = hexParity.toCharArray();
-        String[] stringTemp = new String[24];
-        for(int i = 32; i < 88+stringTemp.length; i++){//Parity starts at 88 and goes to 111
+        String[] stringTemp = new String[14];//24?
+        for(int i = 11; i < 14; i++){//Parity starts at 88 and goes to 111
             stringTemp[i] = String.valueOf(temp[i]);
             //df[i] = Integer.parseInt(stringTemp, 1);
         }
@@ -211,5 +231,30 @@ public class Main {
         }
         return(Integer.parseInt(parityStr, 2));
     }
+    public static String whatDatatype(int dt){
+	switch(dt){
+		case 1: case 2: case 3: case 4:
+			return("Aircraft Identification");
+		case 5: case 6: case 7: case 8:
+			return("Surface Position");
+		case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18:
+			return("Airborn Position with Barometer");
+		case 19:
+			return("Airborn Velocity");
+		case 20: case 21: case 22:
+			return("Airborn Position with GPS/GNSS");
+		case 23: case 24: case 25: case 26: case 27:
+			return("Reserved Types");
+		case 28:
+			return("Aircraft Status");
+		case 29:
+			return("Target State and Status Information");
+		case 31:
+			return("Aircraft Operational Status");
+		default:
+			return("Unknown Datatype");
+
+	}
+    } 
     
 }
