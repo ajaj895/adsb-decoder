@@ -1,6 +1,7 @@
 
 import java.util.Scanner;
 import adsb.util.Decode;
+import adsb.util.DataDecoder;
 /**
  * This is the main class for adsb decoding.
  * @author Evan
@@ -28,9 +29,9 @@ public class Main {
         String icao = "";
         String data = "";
         String parity = ""; 
-
+        
         System.out.println("DF: "+d.getDf(adsbIn)+"\nCA: "+d.getCa(adsbIn)+"\nICAO: "+d.getIcao(adsbIn)+"\nDatatype: "+d.getDatatype(adsbIn)+"\nParity: "+d.getParity(adsbIn));//8dac85839909dc1198a416e9d120
-               
+        DataDecoder.decode(adsbIn.substring(8, 21));       
     }
 
 }
