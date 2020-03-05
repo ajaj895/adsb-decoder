@@ -1,16 +1,15 @@
 
 import java.util.Scanner;
-import adsb.util.AdsbGui;
-import adsb.util.Decode;
-import adsb.util.DataDecoder;
-import adsb.util.DatatypeFormatException;
+import adsb.core.Decode;
+import adsb.core.DataDecoder;
+import adsb.core.DatatypeFormatException;
 
 /**
  * This is the main class for adsb decoding.
  *
  * @author Evan Summer 2019
  */
-public class Main {
+public class AdsbDecoder {
 
     /*
         ADSB messages are in hexadecimal.

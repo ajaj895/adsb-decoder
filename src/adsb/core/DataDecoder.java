@@ -1,5 +1,5 @@
 
-package adsb.util;
+package adsb.core;
 
 /**
  *
@@ -21,12 +21,14 @@ public class DataDecoder {
      * This method also determines the datatype code of the data portion and calls a method that decodes the message with respect to it's datatype. 
      * These datatype specific methods can also be called individually.
      * @param dataHex 
+     * @throws adsb.core.DatatypeFormatException  
+     * @throws adsb.core.AdsbFormatException 
      */
-    public static void decode(String dataHex) throws DatatypeFormatException{
+    public void decode(String dataHex) throws DatatypeFormatException, AdsbFormatException{
         dataDec(dataHex);
     }
     //-The Data payload, 7 bytes (56 bits) that is split into transmission type (the first 5 bits) and the actual data (the last 51 bits).
-    private static void dataDec(String dataHex) throws DatatypeFormatException{
+    private void dataDec(String dataHex) throws DatatypeFormatException, AdsbFormatException{
         if(dataHex.length() != 14){
             throw new DatatypeFormatException("Passed in datatype is not length 14, the passed in length is: "+dataHex.length());
         }

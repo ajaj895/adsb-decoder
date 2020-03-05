@@ -1,8 +1,7 @@
-//TODO: DOCS
-package adsb.util;
+package adsb.core;
 
 /**
- *
+ * DatatypeFormatException is a specific exception that will be used if the datatype portion the ADS-B message is in an unexpected value or length.
  * @author Evan
  */
 public class DatatypeFormatException extends Exception {
