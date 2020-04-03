@@ -1,3 +1,7 @@
+
+import adsb.core.Adsb;
+import adsb.core.AdsbFormatException;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,6 +15,9 @@
  */
 public class AdsbGui extends javax.swing.JFrame {
 
+    
+    static Adsb adsb;
+    
     /**
      * Creates new form AdsbGui
      */
@@ -28,8 +35,8 @@ public class AdsbGui extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        calcButton = new javax.swing.JButton();
+        rtlSdr = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
@@ -47,17 +54,17 @@ public class AdsbGui extends javax.swing.JFrame {
 
         jLabel1.setText("ADS-B Decoder");
 
-        jButton1.setText("Calculate ADS-B");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        calcButton.setText("Calculate ADS-B");
+        calcButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                calcButtonActionPerformed(evt);
             }
         });
 
-        jToggleButton1.setText("Start RTL-SDR");
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        rtlSdr.setText("Start RTL-SDR");
+        rtlSdr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
+                rtlSdrActionPerformed(evt);
             }
         });
 
@@ -84,8 +91,8 @@ public class AdsbGui extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(264, 264, 264)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
-                            .addComponent(jToggleButton1)))
+                            .addComponent(calcButton)
+                            .addComponent(rtlSdr)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(278, 278, 278)
                         .addComponent(jLabel1)))
@@ -122,19 +129,17 @@ public class AdsbGui extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(42, 42, 42)
-                        .addComponent(jButton1)
+                        .addComponent(calcButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jToggleButton1))
+                        .addComponent(rtlSdr))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dfLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)))
+                            .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(icaoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel4)))
+                            .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(dataLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -142,21 +147,20 @@ public class AdsbGui extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(parLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel6)))))
+                            .addComponent(jLabel6))))
                 .addGap(10, 10, 10))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+    private void rtlSdrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rtlSdrActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
+    }//GEN-LAST:event_rtlSdrActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void calcButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_calcButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -185,6 +189,13 @@ public class AdsbGui extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        try{
+            adsb = new Adsb("A968A02296B3E86190169F1D2C24");//for testing purposes ( test message is A968A02296B3E86190169F1D2C24)
+        } catch (AdsbFormatException e) {
+            System.err.println("Error with test message: " + e.getMessage());
+            System.exit(1);
+        }
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -194,10 +205,10 @@ public class AdsbGui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton calcButton;
     private javax.swing.JLabel dataLabel;
     private javax.swing.JLabel dfLabel;
     private javax.swing.JLabel icaoLabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -206,7 +217,7 @@ public class AdsbGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JLabel parLabel;
+    private javax.swing.JToggleButton rtlSdr;
     // End of variables declaration//GEN-END:variables
 }

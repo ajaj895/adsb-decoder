@@ -1,12 +1,27 @@
 package adsb.core;
 
+//TODO: CLEAN UP CODE AND COMMENTED OUT CODE
+
 /**
  *
  * @author Evan
  */
 public class Decode {
 
-    static String[] hex = new String[]{
+    /*
+    String lengths of the whole adsb message:
+    -------------
+    DF:         2 
+    ICAO:       6
+    DATATYPE:  14
+    PARITY:     6
+    -------------
+    TOTAL:     28
+    */
+    
+    //TODO: REWRITE THESE METHODS FOR USING ARRAYS
+    
+    final static String[] bin = new String[]{
         "0000","0001","0010",
         "0011","0100","0101",
         "0110","0111","1000",
@@ -30,55 +45,55 @@ public class Decode {
     private static String Hex(String inHex) throws AdsbFormatException {
         switch (inHex) {
             case "0":
-                return (hex[0]);
+                return (bin[0]);
             case "1":
-                return (hex[1]);
+                return (bin[1]);
             case "2":
-                return (hex[2]);
+                return (bin[2]);
             case "3":
-                return (hex[3]);
+                return (bin[3]);
             case "4":
-                return (hex[4]);
+                return (bin[4]);
             case "5":
-                return (hex[5]);
+                return (bin[5]);
             case "6":
-                return (hex[6]);
+                return (bin[6]);
             case "7":
-                return (hex[7]);
+                return (bin[7]);
             case "8":
-                return (hex[8]);
+                return (bin[8]);
             case "9":
-                return (hex[9]);
-            case "a":
-                return (hex[10]);
-            case "b":
-                return (hex[11]);
-            case "c":
-                return (hex[12]);
-            case "d":
-                return (hex[13]);
-            case "e":
-                return (hex[14]);
-            case "f":
-                return (hex[15]);
+                return (bin[9]);
+            case "A":
+                return (bin[10]);
+            case "B":
+                return (bin[11]);
+            case "C":
+                return (bin[12]);
+            case "D":
+                return (bin[13]);
+            case "E":
+                return (bin[14]);
+            case "F":
+                return (bin[15]);
             default:
-                throw new AdsbFormatException("Error: Input ADS-B message contains non-hex values!");
+                throw new AdsbFormatException("Input ADS-B message contains non-hex values!");
 
         }
     }
-
-    /**
+    
+    /*
      * getDf is a method that decodes the first 5 bits of the DF part of the
-     * ADS-B message from hexadecimal to binary into decimal notation as an
+     * ADS-B message from binary into decimal notation as an
      * integer
      *
-     * @param adsbHex The whole ADS-B hexadecimal message
+     * @param dfBin The DF portion of the ADS-B message in binary
      * @return an integer that represents the DF
      */
-    public int getDf(String adsbHex) throws AdsbFormatException {
-        return Df(adsbHex);
+    public static int[] getDf(String dfBin) throws AdsbFormatException {
+        return Df(dfBin);
     }
-
+    /*
     /**
      * getCa is a method that decodes the last 3 bits of the DF part of the
      * ADS-B message from hexadecimal to binary into decimal notation as an
@@ -86,21 +101,9 @@ public class Decode {
      *
      * @param adsbHex The whole ADS-B hexadecimal message
      * @return an integer that represents the CA
-     */
+     *
     public int getCa(String adsbHex) throws AdsbFormatException {
         return Ca(adsbHex);
-    }
-
-    /**
-     * getIcao gets the ICAO identification of the sender aircraft from the
-     * ADS-B message. This ICAO identification can be searched through a
-     * database to find the information about the sender aircraft.
-     *
-     * @param adsbHex The whole ADS-B hexadecimal message
-     * @return a String of the ICAO identification
-     */
-    public static String getIcao(String adsbHex) {
-        return Icao(adsbHex);
     }
 
     /**
@@ -109,7 +112,7 @@ public class Decode {
      *
      * @param adsbHex The whole ADS-B hexadecimal message
      * @return an integer that represents the datatype of the ADS-B data payload
-     */
+     *
     public int getDatatype(String adsbHex) throws AdsbFormatException {
         return Datatype(adsbHex);
     }
@@ -120,12 +123,13 @@ public class Decode {
      * @param adsbHex The whole ADS-B hexadecimal message
      * @return an integer that represents the parity in decimal form, this may
      * be binary later
-     */
+     *
     public int getParity(String adsbHex) throws AdsbFormatException {
         return Parity(adsbHex);
     }
-
+    */
     //The method that getDf() calls
+    /*
     private int Df(String hexDf) throws AdsbFormatException {
         char[] temp = hexDf.toCharArray();
         String[] stringTemp = new String[2];// NOTE: char 1 and 2 are bits 1-8 
@@ -143,7 +147,16 @@ public class Decode {
 
         return (Integer.parseInt(dfStr.substring(0, 5), 2));//creates a substring of dfStr to truncate the string to the first 5 bits of the 8 bits
     }
-
+    */
+    
+    private static int[] Df(String binDf){
+        int[] returnDf = new int[2];
+        //char[] temp = binDf.toCharArray();
+        returnDf[0] = Integer.parseInt(binDf.substring(0, 5), 2);//DF
+        returnDf[1] = Integer.parseInt(binDf.substring(5), 2);//CA
+        return returnDf;
+    }
+    /*
     //The method that getCa()calls
     private int Ca(String hexDf) throws AdsbFormatException {
         char[] temp = hexDf.toCharArray();
@@ -158,18 +171,14 @@ public class Decode {
         }
         return (Integer.parseInt(caStr.substring(5, 8), 2));//substring of the 5-8 bits of the 8 bits of the df
     }
-
-    //The method that getIcao() calls
-    private static String Icao(String adsbHex) {
-        return adsbHex.substring(2, 8);
-    }
-
+    */
     //The method that getDatatype() calls
+    /*
     private int Datatype(String hexData) throws AdsbFormatException {//TODO FIX THIS, DATA is bits 33-88 and the datatype is the first 5 of those bits (33-37)
         char[] temp = hexData.toCharArray();
-        String[] stringTemp = new String[22];//2 DF hex, 6 ICAO hex, 13 DATA hex
+        String[] stringTemp = new String[22];//2 DF bin, 6 ICAO bin, 13 DATA bin
         int g = 0;
-        for (int i = 0; i < stringTemp.length; i++) {//data starts at 32 and goes to 87, the data type is the first 5 bits, so this splits two hex values
+        for (int i = 0; i < stringTemp.length; i++) {//data starts at 32 and goes to 87, the data type is the first 5 bits, so this splits two bin values
 
             stringTemp[g] = getHexToBin(String.valueOf(temp[i]));
             //df[i] = Integer.parseInt(stringTemp, 1);
@@ -184,11 +193,11 @@ public class Decode {
         return (Integer.parseInt(typeStr.substring(32, 37), 2));
 
     }
-
+    
     //The method that getParity() calls
     private int Parity(String hexParity) throws AdsbFormatException {
         char[] temp = hexParity.toCharArray();
-        String[] stringTemp = new String[28];//2 DF hex, 6 ICAO hex, 13 DATA hex, 6 PARITY hex
+        String[] stringTemp = new String[28];//2 DF bin, 6 ICAO bin, 13 DATA bin, 6 PARITY bin
         int g = 0;
         for (int i = 0; i < stringTemp.length; i++) {//parity starts at 88 and goes to 112,
 
@@ -203,9 +212,11 @@ public class Decode {
 
         return (Integer.parseInt(typeStr.substring(88, 112), 2));
     }
+    */
 
     // **** BINARY METHODS **** //
     //These next methods are used to get the binary versions of DF, Data, and Parity parts of the ADS-B message.
+    //TODO: REWRITE THESE METHODS FOR USING THE ARRAY BASED OBJECT SYSTEM AND TO STREAMLINE THE CODE AND DECOMPLEXIFY
     private String binDf(String hexDf) throws AdsbFormatException {
         char[] temp = hexDf.toCharArray();
         String[] stringTemp = new String[22];
@@ -229,9 +240,9 @@ public class Decode {
 
     private String binData(String hexData) throws AdsbFormatException {
         char[] temp = hexData.toCharArray();
-        String[] stringTemp = new String[22];//2 DF hex, 6 ICAO hex, 13 DATA hex
+        String[] stringTemp = new String[22];//2 DF bin, 6 ICAO bin, 13 DATA bin
         int g = 0;
-        for (int i = 0; i < stringTemp.length; i++) {//data starts at 32 and goes to 87, the data type is the first 5 bits, so this splits two hex values
+        for (int i = 0; i < stringTemp.length; i++) {//data starts at 32 and goes to 87, the data type is the first 5 bits, so this splits two bin values
 
             stringTemp[g] = getHexToBin(String.valueOf(temp[i]));
             //df[i] = Integer.parseInt(stringTemp, 1);
