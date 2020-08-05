@@ -43,6 +43,7 @@ public class Decode {
 
     //Hex to binary method that getHexToBin calls
     private static String Hex(String inHex) throws AdsbFormatException {
+        inHex = inHex.toUpperCase();
         switch (inHex) {
             case "0":
                 return (bin[0]);
@@ -82,6 +83,10 @@ public class Decode {
         }
     }
     
+    public static int[] decDf(String dfBin) throws AdsbFormatException {
+        return Df(dfBin, false);
+    }
+    
     /*
      * getDf is a method that decodes the first 5 bits of the DF part of the
      * ADS-B message from binary into decimal notation as an
@@ -90,8 +95,8 @@ public class Decode {
      * @param dfBin The DF portion of the ADS-B message in binary
      * @return an integer that represents the DF
      */
-    public static int[] getDf(String dfBin) throws AdsbFormatException {
-        return Df(dfBin);
+    public static int[] decDf(String dfBin, boolean debug) throws AdsbFormatException {
+        return Df(dfBin, debug);
     }
     /*
     /**
@@ -149,11 +154,15 @@ public class Decode {
     }
     */
     
-    private static int[] Df(String binDf){
+    private static int[] Df(String binDf, boolean debug){
         int[] returnDf = new int[2];
         //char[] temp = binDf.toCharArray();
+        if(debug) System.out.print("DF decoding: ");
         returnDf[0] = Integer.parseInt(binDf.substring(0, 5), 2);//DF
+        if(debug) System.out.print(returnDf[0] + " ");
         returnDf[1] = Integer.parseInt(binDf.substring(5), 2);//CA
+        if(debug) System.out.println(returnDf[1]);
+        if(debug) System.out.println("DF completed!");
         return returnDf;
     }
     /*

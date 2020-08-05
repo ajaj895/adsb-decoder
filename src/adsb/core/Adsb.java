@@ -13,6 +13,7 @@ package adsb.core;
  */
 public class Adsb extends DataDecoder {
     
+    //Array structure [0] = df/ca | [1] = ICAO | [2] = data | [3] = parity
     private String[] hex = new String[4];//seperated into 4 sections according to the ADS-B message structure.
     private String[] bin = new String[4];
     
@@ -23,13 +24,20 @@ public class Adsb extends DataDecoder {
      * An Adsb constructor that takes an input String in hexadecimal format.
      * @param input A String representing a hexadecimal ADS-B message 
      */
-    public Adsb(String input) throws AdsbFormatException{
-        makeAdsb(input);
+    public Adsb(String input) throws AdsbFormatException, DatatypeFormatException{
+        makeAdsb(input, false);
     }
     
-    private void makeAdsb(String input) throws AdsbFormatException{
-        hex = validateAdsb(input);
-        df = getDf(bin[0]);
+    public Adsb(String input, boolean debug) throws AdsbFormatException, DatatypeFormatException{
+        if(debug) System.out.println("Making ADSB object...");
+        makeAdsb(input, debug);
+        if(debug) System.out.println("...ADSB object created!");
+    }
+    
+    private void makeAdsb(String input, boolean debug) throws AdsbFormatException, DatatypeFormatException{
+        hex = validateAdsb(input, debug);
+        df = decDf(bin[0], debug);
+        data = decData(bin[2], debug);
     }
     
     public String[] getHex(){
@@ -41,17 +49,26 @@ public class Adsb extends DataDecoder {
     }
     
     public String getHexToString(){
-        return toString(hex);
+        return arrToString(hex);
     }
     
     public String getBinToString(){
-        return toString(bin);
+        return arrToString(bin);
+    }
+    
+    
+    public String toString(boolean verbose) throws DatatypeFormatException{
+        return toStr(verbose);
+    }
+    
+    private String toStr(boolean verbose) throws DatatypeFormatException{
+        return ToStr.toString(data, verbose);
     }
     
     //-- Seting Methods --
     //df setter
     private int[] sDf(String bin) throws AdsbFormatException{
-        df = getDf(bin);
+        df = decDf(bin);
         return df;
     }
     
@@ -62,7 +79,7 @@ public class Adsb extends DataDecoder {
     }
     
     //toString method takes an array and returns a string of the elements in that array
-    private String toString(String[] in){
+    private String arrToString(String[] in){
         String temp = "";
         for(int i = 0; i < in.length; i++){
             temp = temp + in[i];
@@ -71,23 +88,95 @@ public class Adsb extends DataDecoder {
     }
     
     public String[] validateAdsb(String adsb) throws AdsbFormatException{
-        return valAdsb(adsb);
+        return valAdsb(adsb, false);
     }
     
-    private String[] valAdsb(String adsb) throws AdsbFormatException{
+    public String[] validateAdsb(String adsb, boolean debug) throws AdsbFormatException{
+        if(debug) System.out.println("Validating ADSB message...");
+        String[] valid = valAdsb(adsb, debug);
+        if(debug){
+            System.out.println("...Validation complete! Values set to: ");
+            for(int i = 0; i < valid.length; i++){
+                System.out.print(valid[i]+ " ");
+            }
+            System.out.println();
+        }
+        return valid;
+    }
+    
+    private String[] valAdsb(String adsb, boolean debug) throws AdsbFormatException{
         if(adsb.length() != 28) throw new AdsbFormatException("ERROR: ADS-B message not proper length");
         //adsb = getHexToBin(adsb);
-        adsb.toUpperCase();
+        adsb = adsb.toUpperCase();
+        if(debug) System.out.println("ADSB Message before validation: "+adsb);
         String[] hexOut = new String[]{adsb.substring(0, 2), adsb.substring(2, 8), adsb.substring(8, 22), adsb.substring(22)};
         String temp = "";
+        if(debug) System.out.println("Validation for-loop: ");
         for(int i = 0; i < adsb.length(); i++){
             temp = temp + Decode.getHexToBin(adsb.substring(i, i+1));
+            if(debug) System.out.println(temp);
         }
         bin[0] = temp.substring(0, 8);
+        if(debug) System.out.println("Bin[0] set to: " + bin[0]);
         bin[1] = temp.substring(8, 32); 
+        if(debug) System.out.println("Bin[1] set to: " + bin[1]);
         bin[2] = temp.substring(32, 88); 
+        if(debug) System.out.println("Bin[2] set to: " + bin[2]);
         bin[3] = temp.substring(88, 112);
+        if(debug) System.out.println("Bin[3] set to: " + bin[3]);
         return hexOut;
+    }
+    
+    public String debug(){
+        String db = "Hex: ";
+        //hex
+       for(int i = 0; i < hex.length; i++){
+            if(hex[i] != null){
+                db = db + hex[i] + " ";
+            } else {
+                break;
+            }
+        }
+        db = db + "\n";
+        
+        //bin
+        db = db + "Bin: ";
+       
+        for(int i = 0; i < bin.length; i++){
+            if(bin[i] != null){
+                db = db + bin[i] + " ";
+            } else {
+                break;
+            }
+        }
+        db = db + "\n";
+        
+        //df
+        db = db + "Df: ";
+        for(int i = 0; i < df.length; i++){
+            //if(df[i] != null){
+            db = db + df[i] + " ";
+            //} else {
+            //    break;
+            //}
+        }
+        db = db + "\n";
+        
+        //ICAO
+        db = db + "ICAO: ";
+        if(this.icao != null) db = db + icao;
+        db = db + "\n";
+        //data
+        db = db + "Data: ";
+        /*
+        if(!this.data.equals(null)){
+            for(int i = 0; i < data.length; i++){
+                db = db + data[i] + " ";
+            }
+            db = db + "\n";
+        }
+        */
+        return db;
     }
     
    
