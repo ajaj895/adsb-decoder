@@ -1,5 +1,8 @@
 
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
 import adsb.core.Decode;
 import adsb.core.DataDecoder;
 import adsb.core.DatatypeFormatException;
@@ -25,9 +28,14 @@ public class AdsbDecoder {
      */
     public static void main(String[] args) {
         Decode d = new Decode();
+        
+        File fileIn = null;
+        Scanner fileScan = null;
+        
         String adsbIn = "";
+        
         if (args.length > 0) { //if no input, default run graphics mode
-            if (args[0].equalsIgnoreCase("-n") || args[0].equalsIgnoreCase("n")) {
+            if (args[0].equalsIgnoreCase("-i") || args[0].equalsIgnoreCase("i")) {// i for interactive
                 Scanner sc = new Scanner(System.in);//TODO: Do this in a seperate class
                 System.out.println("Enter an adsb code: ");
                 adsbIn = sc.next();
@@ -42,9 +50,42 @@ public class AdsbDecoder {
                 */
                 //TODO: Check input before passed to the decoder.
 
-            } else if (args[0].equalsIgnoreCase("-g") || args[0].equalsIgnoreCase("g")) {
+            } else if (args[0].equalsIgnoreCase("-g") || args[0].equalsIgnoreCase("g")) {// g for GUI
                 AdsbGui gui = new AdsbGui();
                 gui.setVisible(true);
+            } else if ((args[0].equalsIgnoreCase("-f") || args[0].equalsIgnoreCase("f")) && args.length >= 2){// f for file
+                for(int i = 1; i < args.length; i++){
+                    fileIn = new File(args[i]);
+                    try {
+                        fileScan = new Scanner(fileIn);
+                    } catch(FileNotFoundException e) {
+                        System.err.println("Input file: "+ fileIn +(" not found, aborting..."));
+                        System.exit(1);
+                    }
+                    //TODO: File reading logic
+                }
+            } else if ((args[0].equalsIgnoreCase("-c") || args[0].equalsIgnoreCase("c")) && args.length >= 2){// c for cli, with inputed adsb codes without being interactive
+                for(int i = 1; i < args.length; i++){
+                    adsbIn = args[i];
+                    //TODO: more logic
+                }
+            } else if ((args[0].equalsIgnoreCase("-h") || args[0].equalsIgnoreCase("h")) || args[0].equalsIgnoreCase("--help")){// h for help
+                System.out.printf("\n"
+                        + "Usage: java -jar adsbProject [OPTION] [INPUT]... \n"
+                        + "Decode INPUT depending on OPTION.\n"
+                        + "Example: java -jar adsbProject -c A968A02296B3E86190169F1D2C24\n"
+                        + "\n"
+                        + "Option selection and description:\n"
+                        + "\t-c \t\tOPTION is the commandline, non-interactive mode\n"
+                        + "\t-f \t\tOPTION gets input from FILE\n"
+                        + "\t-g \t\tOPTION uses the GUI mode of the program\n"
+                        + "\t-h, --help \tOPTION gets the help and usage of the decoder\n"
+                        + "\t-i \t\tOPTION uses the interactive, commandline mode of the program\n"
+                        + "\n"
+                        + "NOTE: GUI mode is enabled by default, meaning that if no OPTIONS are inputted, the GUI will run.\n"
+                        + "\n"
+                        + "For more information, refer to the readme on the github page: <https://github.com/ajaj895/adsb-decoder>\n"
+                        + "\n");
             }
         } else {//gui is default
             AdsbGui gui = new AdsbGui();

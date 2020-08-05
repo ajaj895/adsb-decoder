@@ -1,13 +1,15 @@
+//TODO:
+//Add a toolbar
+//Add the RTL-SDR handling
+//Figure out how to do usb handling
 
 import adsb.core.Adsb;
 import adsb.core.AdsbFormatException;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+import adsb.core.DatatypeFormatException;
+import adsb.core.ToStr;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,6 +19,8 @@ public class AdsbGui extends javax.swing.JFrame {
 
     
     static Adsb adsb;
+    
+    private boolean rtlBool = false ;//RTL-SDR does not start as activated.
     
     /**
      * Creates new form AdsbGui
@@ -38,7 +42,7 @@ public class AdsbGui extends javax.swing.JFrame {
         calcButton = new javax.swing.JButton();
         rtlSdr = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        inBox = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -48,6 +52,7 @@ public class AdsbGui extends javax.swing.JFrame {
         icaoLabel = new javax.swing.JLabel();
         dataLabel = new javax.swing.JLabel();
         parLabel = new javax.swing.JLabel();
+        debugButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ADS-B Decoder");
@@ -68,9 +73,9 @@ public class AdsbGui extends javax.swing.JFrame {
             }
         });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        inBox.setColumns(20);
+        inBox.setRows(5);
+        jScrollPane1.setViewportView(inBox);
 
         jLabel2.setText("Original ADS-B Mesage (in hex):");
 
@@ -82,6 +87,13 @@ public class AdsbGui extends javax.swing.JFrame {
 
         jLabel6.setText("Parity:");
 
+        debugButton.setText("Debug");
+        debugButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -89,14 +101,16 @@ public class AdsbGui extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(264, 264, 264)
+                        .addGap(133, 133, 133)
+                        .addComponent(debugButton)
+                        .addGap(52, 52, 52)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(calcButton)
                             .addComponent(rtlSdr)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(278, 278, 278)
                         .addComponent(jLabel1)))
-                .addGap(0, 254, Short.MAX_VALUE))
+                .addGap(0, 264, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(88, 88, 88)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,7 +143,9 @@ public class AdsbGui extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(42, 42, 42)
-                        .addComponent(calcButton)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(calcButton)
+                            .addComponent(debugButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(rtlSdr))
                     .addGroup(layout.createSequentialGroup()
@@ -155,17 +171,54 @@ public class AdsbGui extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rtlSdrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rtlSdrActionPerformed
-        // TODO add your handling code here:
+        //TODO: RTLSDR HANDLING AND STARTING HERE
+        
+        //Button text changing logic
+        if(rtlBool){
+            rtlSdr.setText("Start RTL-SDR");
+        } else {
+            rtlSdr.setText("Stop RTL-SDR");
+        }
+        
+        rtlBool = !rtlBool;//Leave this at the end.
     }//GEN-LAST:event_rtlSdrActionPerformed
 
     private void calcButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcButtonActionPerformed
         // TODO add your handling code here:
+        String inAdsb = inBox.getText();
+        
+        if(inAdsb.length() > 0){
+            System.out.println(inAdsb);//for testing
+        } else {
+            System.out.println("error");//for testing
+        }
     }//GEN-LAST:event_calcButtonActionPerformed
+
+    private void debugButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugButtonActionPerformed
+        String inBlock = inBox.getText();
+        Scanner adsbScanner = new Scanner(inBlock);
+        
+        while(adsbScanner.hasNext()){
+            String current = adsbScanner.nextLine();
+            System.out.println("Testing: " + current);
+            try {
+            Adsb adsb = new Adsb(current , true);
+            adsb.toString(true);
+            } catch (DatatypeFormatException e){
+                System.out.println(e);
+                //corruptedMsgs++;
+            } catch (AdsbFormatException e) {
+                Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, e);
+            }
+            
+            System.out.println("Completed: " + current);
+        }
+    }//GEN-LAST:event_debugButtonActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws DatatypeFormatException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -207,8 +260,10 @@ public class AdsbGui extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton calcButton;
     private javax.swing.JLabel dataLabel;
+    private javax.swing.JButton debugButton;
     private javax.swing.JLabel dfLabel;
     private javax.swing.JLabel icaoLabel;
+    private javax.swing.JTextArea inBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -216,7 +271,6 @@ public class AdsbGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel parLabel;
     private javax.swing.JToggleButton rtlSdr;
     // End of variables declaration//GEN-END:variables
