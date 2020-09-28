@@ -7,8 +7,12 @@
 import adsb.core.Adsb;
 import adsb.core.AdsbFormatException;
 import adsb.core.DatatypeFormatException;
+import adsb.core.FromFile;
 import adsb.core.Parity;
 import adsb.core.ToStr;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.LinkedList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -206,6 +210,31 @@ public class MainTest {
         */
         for(int i = 0; i < testMsg.length; i++){
             Adsb adsb = new Adsb(testMsg[i]);
+            System.out.println(adsb.debug());
+        }
+    }
+    
+    //Tests reading from a file
+    @Test
+    public void fileTest() throws FileNotFoundException{
+        System.out.println("Testing file reading...");
+        File f = new File("C:\\Users\\Evan\\Documents\\NetBeansProjects\\adsbProject\\fileTest.txt");
+        FromFile.readFile(f);
+        FromFile.debug();
+        System.out.println("Testing of file reading complete!");
+    }
+    
+    //Tests real world decoding and data from a file
+    @Test
+    public void fileDecodeTest() throws FileNotFoundException, AdsbFormatException, DatatypeFormatException{
+        System.out.println("Testing file reading and decoding from file...");
+        File f = new File("C:\\Users\\Evan\\Documents\\NetBeansProjects\\adsbProject\\fileTest.txt");
+        LinkedList<String> test = FromFile.readFile(f);
+        System.out.println("\nList contains: ");
+        FromFile.debug();
+        System.out.println("\nAdsb decoding from file");
+        for(int i = test.size(); i > 0; i--){ // For loop for removing nodes but also retreving the Adsb code.
+            Adsb adsb = new Adsb(test.remove());
             System.out.println(adsb.debug());
         }
     }

@@ -7,9 +7,18 @@ import adsb.core.Adsb;
 import adsb.core.AdsbFormatException;
 import adsb.core.DatatypeFormatException;
 import adsb.core.ToStr;
+import adsb.core.FromFile;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.awt.Desktop;
+import java.io.File;
+import java.nio.file.Path;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
+import javax.swing.JFileChooser;
+
 
 /**
  *
@@ -19,6 +28,7 @@ public class AdsbGui extends javax.swing.JFrame {
 
     
     static Adsb adsb;
+    private Desktop desktop = Desktop.getDesktop();
     
     private boolean rtlBool = false ;//RTL-SDR does not start as activated.
     
@@ -38,6 +48,7 @@ public class AdsbGui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jToolBar1 = new javax.swing.JToolBar();
         jLabel1 = new javax.swing.JLabel();
         calcButton = new javax.swing.JButton();
         rtlSdr = new javax.swing.JToggleButton();
@@ -48,11 +59,24 @@ public class AdsbGui extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        dfLabel = new javax.swing.JLabel();
-        icaoLabel = new javax.swing.JLabel();
-        dataLabel = new javax.swing.JLabel();
-        parLabel = new javax.swing.JLabel();
+        dfBox = new javax.swing.JLabel();
+        icaoBox = new javax.swing.JLabel();
+        dataBox = new javax.swing.JLabel();
+        parBox = new javax.swing.JLabel();
         debugButton = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        importFile = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        opMenu = new javax.swing.JMenu();
+        toolsMenu = new javax.swing.JMenu();
+        helpMenu = new javax.swing.JMenu();
+        howToUse = new javax.swing.JMenuItem();
+        updates = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        about = new javax.swing.JMenuItem();
+
+        jToolBar1.setRollover(true);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ADS-B Decoder");
@@ -60,6 +84,7 @@ public class AdsbGui extends javax.swing.JFrame {
         jLabel1.setText("ADS-B Decoder");
 
         calcButton.setText("Calculate ADS-B");
+        calcButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         calcButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 calcButtonActionPerformed(evt);
@@ -67,6 +92,7 @@ public class AdsbGui extends javax.swing.JFrame {
         });
 
         rtlSdr.setText("Start RTL-SDR");
+        rtlSdr.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         rtlSdr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rtlSdrActionPerformed(evt);
@@ -88,55 +114,103 @@ public class AdsbGui extends javax.swing.JFrame {
         jLabel6.setText("Parity:");
 
         debugButton.setText("Debug");
+        debugButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         debugButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 debugButtonActionPerformed(evt);
             }
         });
 
+        fileMenu.setText("File");
+
+        importFile.setText("Import from File");
+        importFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importFileActionPerformed(evt);
+            }
+        });
+        fileMenu.add(importFile);
+
+        jMenuBar1.add(fileMenu);
+
+        editMenu.setText("Edit");
+        jMenuBar1.add(editMenu);
+
+        opMenu.setText("Options");
+        jMenuBar1.add(opMenu);
+
+        toolsMenu.setText("Tools");
+        jMenuBar1.add(toolsMenu);
+
+        helpMenu.setText("Help");
+
+        howToUse.setText("How to Use");
+        helpMenu.add(howToUse);
+
+        updates.setText("Check for Updates");
+        updates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updatesActionPerformed(evt);
+            }
+        });
+        helpMenu.add(updates);
+        helpMenu.add(jSeparator1);
+
+        about.setText("About");
+        about.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutActionPerformed(evt);
+            }
+        });
+        helpMenu.add(about);
+
+        jMenuBar1.add(helpMenu);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(133, 133, 133)
+                .addComponent(debugButton)
+                .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(133, 133, 133)
-                        .addComponent(debugButton)
-                        .addGap(52, 52, 52)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(calcButton)
-                            .addComponent(rtlSdr)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(278, 278, 278)
-                        .addComponent(jLabel1)))
-                .addGap(0, 264, Short.MAX_VALUE))
+                    .addComponent(calcButton)
+                    .addComponent(rtlSdr))
+                .addGap(0, 265, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(88, 88, 88)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(21, 21, 21)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel6))
-                        .addGap(36, 36, 36)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dataLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                            .addComponent(icaoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dfLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(parLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jLabel2))
+                        .addGap(88, 88, 88)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(21, 21, 21)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel6))
+                                .addGap(36, 36, 36)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(dataBox, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                                    .addComponent(icaoBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(dfBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(parBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel2)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(263, 263, 263)
+                        .addComponent(jLabel1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(32, 32, 32)
                 .addComponent(jLabel1)
-                .addGap(37, 37, 37)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,19 +224,19 @@ public class AdsbGui extends javax.swing.JFrame {
                         .addComponent(rtlSdr))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dfLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dfBox, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(icaoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(icaoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dataLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dataBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(parLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(parBox, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))))
                 .addGap(10, 10, 10))
         );
@@ -182,16 +256,47 @@ public class AdsbGui extends javax.swing.JFrame {
         
         rtlBool = !rtlBool;//Leave this at the end.
     }//GEN-LAST:event_rtlSdrActionPerformed
-
+    
+    private void updateLabels(){//For updating the labels for each adsb calculation
+        //dfBox.setText("test");
+        //icaoBox.setText("test");
+        if(adsb.getDf() != null) dfBox.setText(adsb.getDf());
+        if(adsb.getIcao() != null) icaoBox.setText(adsb.getIcao());
+        /*
+        try {
+            //if(adsb.getData() != null) dataBox.setText(adsb.getData());
+            TimeUnit.SECONDS.sleep(2);//Waits two seconds
+        } catch (InterruptedException ex) {
+            System.err.println("Interrupted!");
+            Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        */
+    }
+    
     private void calcButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcButtonActionPerformed
         // TODO add your handling code here:
         String inAdsb = inBox.getText();
         
+        try { //Tests and catches but does not handle the errors other than logs them. 
+           adsb = new Adsb(inAdsb);
+        } catch (AdsbFormatException ex) {
+            Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DatatypeFormatException ex) {
+            Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        // LABEL PRINTING SECTION
+        updateLabels();//Sets the labels of the GUI
+        //parityBox.setText(adsb.getParity()); //Doesn't exist yet.
+        
+        /*
         if(inAdsb.length() > 0){
             System.out.println(inAdsb);//for testing
         } else {
             System.out.println("error");//for testing
+            System.exit(1);//Also for testing purposes
         }
+        */
     }//GEN-LAST:event_calcButtonActionPerformed
 
     private void debugButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugButtonActionPerformed
@@ -214,6 +319,57 @@ public class AdsbGui extends javax.swing.JFrame {
             System.out.println("Completed: " + current);
         }
     }//GEN-LAST:event_debugButtonActionPerformed
+
+    private void updatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updatesActionPerformed
+
+    private void aboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutActionPerformed
+        String curPath = new File("").getAbsolutePath();//Gets current path
+        File about = new File(curPath + "\\README.md");//README.md is in the root directory of the project.
+        try {
+            desktop.open(about); //Tries to open the file (will open in the user's prefered app for selected file types
+        } catch (IOException ex) {
+            System.err.println("About file not found!");
+            Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+    }//GEN-LAST:event_aboutActionPerformed
+
+    private void importFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFileActionPerformed
+        //String curPath = new File("").getAbsolutePath();
+        JFileChooser fileChoose = new JFileChooser("C:\\"); //Creates a file browser and selector and starts it at C://
+        fileChoose.showSaveDialog(null);//Opens the browser, can't run without this.
+        try {
+            //desktop.open(new File(fileChoose.getSelectedFile().getAbsolutePath())); //For testing purposes
+            LinkedList<String> input = FromFile.readFile(new File(fileChoose.getSelectedFile().getAbsolutePath()));
+            //Gets selected file path, then makes it a file and tries to open it.
+            //Runs the selected file through the Adsb decoding.
+            //FromFile.debug();//For testing purposes
+            
+            for(int i = input.size(); i > 0; i--){
+                try {
+                    adsb = new Adsb(input.remove());//Sets the adsb object from the strings in the list and removes the node in the process 
+                    System.out.println(adsb.debug());//For testing purposes
+                    updateLabels();//Updates the labels
+                } catch (AdsbFormatException ex) {
+                    System.out.println("AdsbFormatException: " + ex);
+                    Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (DatatypeFormatException ex) {
+                    System.out.println("AdsbFormatException: " + ex);
+                    Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+            }
+        } catch (IOException ex) {
+            System.err.println("File not found!");
+            Logger.getLogger(AdsbGui.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        
+        ;
+    }//GEN-LAST:event_importFileActionPerformed
 
     /**
      * @param args the command line arguments
@@ -241,13 +397,6 @@ public class AdsbGui extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(AdsbGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        try{
-            adsb = new Adsb("A968A02296B3E86190169F1D2C24");//for testing purposes ( test message is A968A02296B3E86190169F1D2C24)
-        } catch (AdsbFormatException e) {
-            System.err.println("Error with test message: " + e.getMessage());
-            System.exit(1);
-        }
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -258,11 +407,17 @@ public class AdsbGui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem about;
     private javax.swing.JButton calcButton;
-    private javax.swing.JLabel dataLabel;
+    private javax.swing.JLabel dataBox;
     private javax.swing.JButton debugButton;
-    private javax.swing.JLabel dfLabel;
-    private javax.swing.JLabel icaoLabel;
+    private javax.swing.JLabel dfBox;
+    private javax.swing.JMenu editMenu;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem howToUse;
+    private javax.swing.JLabel icaoBox;
+    private javax.swing.JMenuItem importFile;
     private javax.swing.JTextArea inBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -270,8 +425,14 @@ public class AdsbGui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel parLabel;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JMenu opMenu;
+    private javax.swing.JLabel parBox;
     private javax.swing.JToggleButton rtlSdr;
+    private javax.swing.JMenu toolsMenu;
+    private javax.swing.JMenuItem updates;
     // End of variables declaration//GEN-END:variables
 }

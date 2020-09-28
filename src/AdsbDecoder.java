@@ -1,11 +1,11 @@
 
 import java.util.Scanner;
 import java.io.File;
-import java.io.FileReader;
+//import java.io.FileReader;
 import java.io.FileNotFoundException;
 import adsb.core.Decode;
-import adsb.core.DataDecoder;
-import adsb.core.DatatypeFormatException;
+//import adsb.core.DataDecoder;
+//import adsb.core.DatatypeFormatException;
 
 /**
  * This is the main class for adsb decoding.
@@ -67,13 +67,18 @@ public class AdsbDecoder {
             } else if ((args[0].equalsIgnoreCase("-c") || args[0].equalsIgnoreCase("c")) && args.length >= 2){// c for cli, with inputed adsb codes without being interactive
                 for(int i = 1; i < args.length; i++){
                     adsbIn = args[i];
+                    if(adsbIn.length() == 28){
+                        
+                    } else {
+                        System.out.println("ADS-B length incorrect!");
+                    }
                     //TODO: more logic
                 }
             } else if ((args[0].equalsIgnoreCase("-h") || args[0].equalsIgnoreCase("h")) || args[0].equalsIgnoreCase("--help")){// h for help
                 System.out.printf("\n"
                         + "Usage: java -jar adsbProject [OPTION] [INPUT]... \n"
                         + "Decode INPUT depending on OPTION.\n"
-                        + "Example: java -jar adsbProject -c A968A02296B3E86190169F1D2C24\n"
+                        + "Example: java -jar adsbProject -c a8cea9f35d7cdb7082f45f449728\n"
                         + "\n"
                         + "Option selection and description:\n"
                         + "\t-c \t\tOPTION is the commandline, non-interactive mode\n"

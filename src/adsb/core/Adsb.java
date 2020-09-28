@@ -37,6 +37,7 @@ public class Adsb extends DataDecoder {
     private void makeAdsb(String input, boolean debug) throws AdsbFormatException, DatatypeFormatException{
         hex = validateAdsb(input, debug);
         df = decDf(bin[0], debug);
+        icao = hex[1];
         data = decData(bin[2], debug);
     }
     
@@ -64,6 +65,34 @@ public class Adsb extends DataDecoder {
     private String toStr(boolean verbose) throws DatatypeFormatException{
         return ToStr.toString(data, verbose);
     }
+    
+    //-- Getter Methods --
+    public String getDf(){
+        String sDf = df[0] + " " + df[1];
+        return sDf;
+    }
+    
+    public String getIcao(){
+        return icao;
+    }
+    
+    public String getData(){
+        
+        String sData = "";
+        
+        for(int i : data){
+            sData = sData + " " + i;
+        }
+        
+        return sData;
+    }
+    
+    /*
+     TO BE IMPLEMENTED LATER WHEN PARITY IS IMPLEMENTED.
+    public String getParity(){
+        
+    }
+    */
     
     //-- Seting Methods --
     //df setter
