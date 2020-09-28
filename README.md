@@ -12,6 +12,8 @@ To run the program do the following command:
 
 java -jar path/to/jar/[todo build a jar]
 
+This program also handles args similar to how UNIX commands do, with -h or --help or just h giving you a brief overview of what the program does.
+
 Eventually I hope to make this an application that opens a java application and eventually activly decode messages in real time, but thats is far off for now.
 
 ## ABOUT
@@ -20,5 +22,13 @@ This project is work in progress ADS-B decoder for automated aircraft radio mess
 I am in the progress of adding decoding for the data of the ADS-B messages, different types and what not. I am also working on decoding the parity part of the message but that might take some time to work out.
 
 For more information about ADS-B decoding, "The 1090MHz Riddle" is a good reference that I have been using as a reference to create this project at this website: https://mode-s.org/decode/adsb/introduction.html 
+
+## SCREENSHOTS
+
+Screenshots will be added in the near future as I flush out the GUI and make it functional.
+
+## PROGRESS 
+
+Currently the adsb-decode can decode messages and only actually does anything with the identification messages and will give you the call sign of that aircraft (command line only at the moment).
 
 
