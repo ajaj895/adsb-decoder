@@ -145,6 +145,11 @@ public class AdsbGui extends javax.swing.JFrame {
         helpMenu.setText("Help");
 
         howToUse.setText("How to Use");
+        howToUse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                howToUseActionPerformed(evt);
+            }
+        });
         helpMenu.add(howToUse);
 
         updates.setText("Check for Updates");
@@ -370,6 +375,10 @@ public class AdsbGui extends javax.swing.JFrame {
         
         ;
     }//GEN-LAST:event_importFileActionPerformed
+
+    private void howToUseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_howToUseActionPerformed
+        aboutActionPerformed(evt);
+    }//GEN-LAST:event_howToUseActionPerformed
 
     /**
      * @param args the command line arguments

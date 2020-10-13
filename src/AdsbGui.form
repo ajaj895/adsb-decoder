@@ -50,6 +50,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="How to Use"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="howToUseActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="updates">
               <Properties>
