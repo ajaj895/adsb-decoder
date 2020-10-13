@@ -27,6 +27,14 @@ For more information about ADS-B decoding, "The 1090MHz Riddle" is a good refere
 
 Screenshots will be added in the near future as I flush out the GUI and make it functional.
 
+Here is what the simple GUI looks like:
+
+![Simple GUI](/screenshots/PlainGUI.png)
+
+Here is the GUI with some data, both the program and the GUI are prototypes so keep that in mind:
+
+![Test data being used](/screenshots/DataTest.png)
+
 ## PROGRESS 
 
 Currently the adsb-decode can decode messages and only actually does anything with the identification messages and will give you the call sign of that aircraft (command line only at the moment).
