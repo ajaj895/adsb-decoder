@@ -27,9 +27,9 @@ For more information about ADS-B decoding, "The 1090MHz Riddle" is a good refere
 
 Screenshots will be added in the near future as I flush out the GUI and make it functional.
 
-![Simple GUI]/screenshots/PlainGUI.png
+![Simple GUI](/screenshots/PlainGUI.png)
 
-![Test data being used]/screenshots/DataTest.png
+![Test data being used](/screenshots/DataTest.png)
 
 ## PROGRESS 
 
