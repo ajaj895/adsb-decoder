@@ -13,11 +13,11 @@ import adsb.core.ToStr;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.*;
+import org.junit.contrib.java.lang.system.Assertion;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
 import static org.junit.Assert.*;
 
 /**
@@ -25,6 +25,11 @@ import static org.junit.Assert.*;
  * @author Evan
  */
 public class MainTest {
+
+    // Solution for this found here:
+    // https://stackoverflow.com/questions/15990433/using-junit-on-code-that-terminates?noredirect=1&lq=1
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none(); // For testing intention exits.
     
     public MainTest() {
     }
@@ -51,11 +56,12 @@ public class MainTest {
      */
     @Test
     public void testMainWArgs() {
-        
+        exit.expectSystemExit(); // Expect a nominal exit due to the gui closing.
         String[] args = new String[1];
         args[0] = "-g";
         System.out.println("main with " + args[0]);
         AdsbDecoder.main(args);
+
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
@@ -64,7 +70,8 @@ public class MainTest {
      * Test of main method, of class AdsbDecoder without args.
      */
     @Test
-    public void testMainWoArgs(){
+    public void testMainWoArgs() {
+        exit.expectSystemExit(); // Expect an exit due to handling of no args
         System.out.println("Main without args");
         String[] args = new String[0];
         AdsbDecoder.main(args);
@@ -104,7 +111,7 @@ public class MainTest {
     }
     
     @Test
-    public void testHelpMsg(){
+    public void testHelpMsg() {
         System.out.println("Main with --help in args");
         String[] args = new String[1];
         args[0]="-h";
@@ -122,7 +129,7 @@ public class MainTest {
     */
     
     @Test
-    public void toStrIdArrTest(){
+    public void toStrIdArrTest() {
         //11 12 13 49 48 50 51 32
         System.out.println("Testing the Aircraft ID array...");
         int[] test = new int[]{11, 12, 13, 49, 48, 50, 51, 32};
@@ -133,7 +140,7 @@ public class MainTest {
     }
     
     @Test
-    public void toStringAdsbObjectTest() throws AdsbFormatException, DatatypeFormatException{
+    public void toStringAdsbObjectTest() throws AdsbFormatException, DatatypeFormatException {
         System.out.println("Testing the full adsb object creation and toString method...");
         String testMsg = "8D4840D6202CC371C32CE0576098";//Aircraft ID test 
         Adsb adsb = new Adsb(testMsg);
@@ -142,7 +149,7 @@ public class MainTest {
     }
     
     @Test
-    public void realWorldDataSmallTest() throws AdsbFormatException, DatatypeFormatException{
+    public void realWorldDataSmallTest() throws AdsbFormatException, DatatypeFormatException {
         System.out.println("Testing a small amount of real world data...");
         /*
         dbb8cef86b4e0bab6489d9c9a039;
@@ -173,7 +180,7 @@ public class MainTest {
         850e3d7e4891a0dd7c7b476c3aed;
         */
         
-        String[] testMsg = new String[]{
+        String[] testMsg = new String[] {
             "dbb8cef86b4e0bab6489d9c9a039",
             "93565dfbaeeab96de0a2a30a9fa8",
             "d7d1a2ed05a0271cc3e44aca69e4",
@@ -208,7 +215,7 @@ public class MainTest {
         }
         System.out.println("TEST COMPLETE!");
         */
-        for(int i = 0; i < testMsg.length; i++){
+        for(int i = 0; i < testMsg.length; i++) {
             Adsb adsb = new Adsb(testMsg[i]);
             System.out.println(adsb.debug());
         }
@@ -216,7 +223,7 @@ public class MainTest {
     
     //Tests reading from a file
     @Test
-    public void fileTest() throws FileNotFoundException{
+    public void fileTest() throws FileNotFoundException {
         System.out.println("Testing file reading...");
         File f = new File("C:\\Users\\Evan\\Documents\\NetBeansProjects\\adsbProject\\fileTest.txt");
         FromFile.readFile(f);
@@ -226,7 +233,7 @@ public class MainTest {
     
     //Tests real world decoding and data from a file
     @Test
-    public void fileDecodeTest() throws FileNotFoundException, AdsbFormatException, DatatypeFormatException{
+    public void fileDecodeTest() throws FileNotFoundException, AdsbFormatException, DatatypeFormatException {
         System.out.println("Testing file reading and decoding from file...");
         File f = new File("C:\\Users\\Evan\\Documents\\NetBeansProjects\\adsbProject\\fileTest.txt");
         LinkedList<String> test = FromFile.readFile(f);
@@ -237,6 +244,55 @@ public class MainTest {
             Adsb adsb = new Adsb(test.remove());
             System.out.println(adsb.debug());
         }
+    }
+
+    @Test
+    public void fileHandling() {
+        exit.expectSystemExitWithStatus(1); // Expects an exit due to the data in the file being bad.
+        String[] args = new String[2];
+        args[0] = "-f";
+        args[1] = "../fileTest.txt";
+        AdsbDecoder.file(args);
+
+    }
+
+    @Test
+    public void breakFileHandling() {
+        exit.expectSystemExitWithStatus(2);
+        String[] args = new String[2];
+        args[0] = "-f";
+        args[1] = "fileTest.txt";
+        AdsbDecoder.file(args);
+    }
+
+    @Test
+    public void testCLI() {
+        String[] args = new String[2];
+        args[0] = "-c";
+        args[1] = "91078855fecb649e7632c4052613";
+        AdsbDecoder.cli(args);
+    }
+
+    @Test
+    public void breakCLI() {
+        exit.expectSystemExitWithStatus(1); // Expect an exit due to passed in bad data.
+        String[] args = new String[2];
+        args[0] = "-c";
+        args[1] = "91078855fecb6497632c4052613";
+        AdsbDecoder.cli(args);
+    }
+
+    @Test
+    public void testHelp() {
+        AdsbDecoder.help();
+    }
+
+    @Test
+    public void majorDatasetFileTest() {
+        String[] args = new String[2];
+        args[0] = "-f";
+        args[1] = "../largeDatasetTest.txt";
+        AdsbDecoder.file(args);
     }
     
 }

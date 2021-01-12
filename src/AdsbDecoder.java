@@ -18,6 +18,8 @@ import adsb.core.Decode;
  */
 public class AdsbDecoder {
 
+    //Decode d = new Decode();
+
     /*
         ADSB messages are in hexadecimal.
         Adsb messages are broken up into four parts (in order): 
@@ -31,91 +33,144 @@ public class AdsbDecoder {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Decode d = new Decode();
-        
-        File fileIn = null;
-        Scanner fileScan = null;
-        
-        String adsbIn = "";
         
         if (args.length > 0) { //if no input, default run graphics mode
-            if (args[0].equalsIgnoreCase("-i") || args[0].equalsIgnoreCase("i")) {// i for interactive
-                Scanner sc = new Scanner(System.in);//TODO: Do this in a seperate class
-                System.out.println("Enter an adsb code: ");
-                adsbIn = sc.next();
-                /*
-                System.out.println("DF: " + d.getDf(adsbIn) + "\nCA: " + d.getCa(adsbIn) + "\nICAO: " + d.getIcao(adsbIn) + "\nDatatype: " + d.getDatatype(adsbIn) + "\nParity: " + d.getParity(adsbIn));//8dac85839909dc1198a416e9d120
-                try {
-                    DataDecoder.decode(adsbIn.substring(8, 21));
-                } catch (DatatypeFormatException e) {
-                    System.err.println("Error: Invalid input");
-                    System.out.println("Error: Invalid input");
-                }
-                */
-                //TODO: Check input before passed to the decoder.
+            if (args[0].equalsIgnoreCase("-i")) {// i for interactive
+                interactive();
+                // GUI selection
+            } else if (args[0].equalsIgnoreCase("-g")) {
+                gui();
+                // File input
+            } else if (args[0].equalsIgnoreCase("-f") && args.length >= 2) {
+                file(args);
+                // Command Line (not interactive) with an input ADS-B message in args[1*]
+            } else if (args[0].equalsIgnoreCase("-c") && args.length >= 2) {
+                cli(args);
+                // Help text
+            } else if (args[0].equalsIgnoreCase("-h") || args[0].equalsIgnoreCase("--help")) {
+                help();
+            }
+        } else {//gui is default so it can be used in a jar
+            gui();
+        }
 
-            } else if (args[0].equalsIgnoreCase("-g") || args[0].equalsIgnoreCase("g")) {// g for GUI
-                AdsbGui gui = new AdsbGui();
-                gui.setVisible(true);
-            } else if ((args[0].equalsIgnoreCase("-f") || args[0].equalsIgnoreCase("f")) && args.length >= 2){// f for file
-                for(int i = 1; i < args.length; i++){
-                    fileIn = new File(args[i]);
-                    try {
-                        fileScan = new Scanner(fileIn);
-                    } catch(FileNotFoundException e) {
-                        System.err.println("Input file: "+ fileIn +(" not found, aborting..."));
+    }
+
+    /**
+     * Runs the interactive version of the program.
+     */
+    public static void interactive() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter an adsb code: ");
+        String adsbIn = sc.next();
+        //TODO: Check input before passed to the decoder.
+        try {
+            Adsb adsb = new Adsb(adsbIn);
+            System.out.println(adsb.toString(false)); // Prints the decoded message in less details.
+        } catch (DatatypeFormatException e) {
+            System.err.println("Error! Error in decoding the data of the ADS-B message: " + adsbIn);
+            System.err.println("Exiting...");
+            System.exit(1);
+        } catch (AdsbFormatException e) {
+            System.err.println("Error! Error in the format of the given ADS-B message: " + adsbIn);
+            System.err.println("Exiting...");
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Runs the GUI version of the program.
+     */
+    public static void gui() {
+        AdsbGui gui = new AdsbGui();
+        gui.setVisible(true);
+    }
+
+    /**
+     * Run the file capable version of the program, taking file(s) as inputs in the args.
+     * @param args An array of args from the main() program.
+     */
+    public static void file(String[] args){
+        File fileIn = null; // To prevent crashes if file doesn't exist
+        Scanner fileScan = null; // To prevent crashes if file doesn't exist
+
+        for(int i = 1; i < args.length; i++){ // Data transformation might be needed if using GNU_Radio
+            fileIn = new File(args[i]);
+            try { // File scanning try-catch
+                fileScan = new Scanner(fileIn);
+                while(fileScan.hasNext()) {
+                    String adsbIn = fileScan.nextLine();
+                    try { // ADS-B try-catch
+                        Adsb adsb = new Adsb(adsbIn);
+                        System.out.println(adsb.toString(false)); // Prints decoded message in non-detailed form.
+                    } catch (DatatypeFormatException e) {
+                        System.err.println("Error! Error in decoding the data of the ADS-B message: " + adsbIn);
+                        System.err.println("Exiting...");
+                        System.exit(1);
+                    } catch (AdsbFormatException e) {
+                        System.err.println("Error! Error in the format of the given ADS-B message: " + adsbIn);
+                        System.err.println("Exiting...");
                         System.exit(1);
                     }
-                    //TODO: File reading logic
                 }
-            } else if ((args[0].equalsIgnoreCase("-c") || args[0].equalsIgnoreCase("c")) && args.length >= 2){// c for cli, with inputed adsb codes without being interactive
-                for(int i = 1; i < args.length; i++){
-                    adsbIn = args[i];
-                    if(adsbIn.length() == 28){
-                        try { // TODO: Add debug checking
-                            Adsb adsb = new Adsb(adsbIn);
-                            System.out.println(adsb.toString(false)); //Prints out the non-detailed adsb message.
-                        } catch (AdsbFormatException e) {
-                            System.err.println("Error! ADS-B Format incorrect with message: " + adsbIn);
-                            System.err.println(e);
-                        } catch (DatatypeFormatException e) {
-                            System.err.println("Error! ADS-B Datatype format incorrect with the message: " + adsbIn);
-                            System.err.println(e);
-                        }
-                    } else {
-                        System.out.println("ADS-B length incorrect!");
-                    }
-                    //TODO: more logic
-                }
-            } else if ((args[0].equalsIgnoreCase("-h") || args[0].equalsIgnoreCase("h")) || args[0].equalsIgnoreCase("--help")){// h for help
-                System.out.printf("\n"
-                        + "Usage: java -jar adsbProject [OPTION] [INPUT]... \n"
-                        + "Decode INPUT depending on OPTION.\n"
-                        + "Example: java -jar adsbProject -c a8cea9f35d7cdb7082f45f449728\n"
-                        + "\n"
-                        + "Option selection and description:\n"
-                        + "\t-c \t\tOPTION is the commandline, non-interactive mode\n"
-                        + "\t-f \t\tOPTION gets input from FILE\n"
-                        + "\t-g \t\tOPTION uses the GUI mode of the program\n"
-                        + "\t-h, --help \tOPTION gets the help and usage of the decoder\n"
-                        + "\t-i \t\tOPTION uses the interactive, commandline mode of the program\n"
-                        + "\n"
-                        + "NOTE: GUI mode is enabled by default, meaning that if no OPTIONS are inputted, the GUI will run.\n"
-                        + "\n"
-                        + "For more information, refer to the readme on the github page: <https://github.com/ajaj895/adsb-decoder>\n"
-                        + "\n");
+            } catch(FileNotFoundException e) {
+                System.err.println("Input file: "+ fileIn +(" not found, aborting..."));
+                System.exit(2);
             }
-        } else {//gui is default
-            AdsbGui gui = new AdsbGui();
-            gui.setVisible(true);
-        }
-        /*
-        String df = "";
-        String icao = "";
-        String data = "";
-        String parity = ""; 
-         */
 
+        }
+    }
+
+    /**
+     * Run the command line version of the program, passing in the messages to be decoded in the args, similar to files.
+     * @param args An array of strings of the args from the Main() program.
+     */
+    public static void cli(String[] args) {
+        for(int i = 1; i < args.length; i++) {
+            String adsbIn = args[i];
+            if (adsbIn.length() == 28) {
+                try { // TODO: Add debug checking
+                    Adsb adsb = new Adsb(adsbIn);
+                    System.out.println(adsb.toString(false)); //Prints out the non-detailed adsb message.
+                } catch (AdsbFormatException e) {
+                    System.err.println("Error! ADS-B Format incorrect with message: " + adsbIn);
+                    System.err.println("Exiting...");
+                    System.exit(1);
+                } catch (DatatypeFormatException e) {
+                    System.err.println("Error! ADS-B Datatype format incorrect with the message: " + adsbIn);
+                    System.err.println("Exiting...");
+                    System.exit(1);
+                }
+            } else {
+                System.err.println("ADS-B length incorrect!");
+                System.err.println("Exiting...");
+                System.exit(1);
+            }
+            //TODO: more logic
+        }
+    }
+
+    /**
+     * Prints a helpful information message to the command line.
+     */
+    public static void help() {
+        String helpText = "\n" // Used for wrong or empty args
+                + "Usage: java -jar adsbProject [OPTION] [INPUT MESSAGE]... \n"
+                + "Decode INPUT depending on OPTION.\n"
+                + "Example: java -jar adsbProject -c a8cea9f35d7cdb7082f45f449728\n"
+                + "\n"
+                + "Option selection and description:\n"
+                + "\t-c \t\tOPTION is the commandline, non-interactive mode\n"
+                + "\t-f \t\tOPTION gets input from FILE\n"
+                + "\t-g \t\tOPTION uses the GUI mode of the program\n"
+                + "\t-h, --help \tOPTION gets the help and usage of the decoder\n"
+                + "\t-i \t\tOPTION uses the interactive, commandline mode of the program\n"
+                + "\n"
+                + "NOTE: GUI mode is enabled by default, meaning that if no OPTIONS are inputted, the GUI will run.\n"
+                + "\n"
+                + "For more information, refer to the readme on the github page: <https://github.com/ajaj895/adsb-decoder>\n"
+                + "\n";
+        System.out.println(helpText);
     }
 
 }

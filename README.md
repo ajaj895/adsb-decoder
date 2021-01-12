@@ -18,7 +18,10 @@ Eventually I hope to make this an application that opens a java application and 
 
 ### Dependencies
 
-JUnit 4.13.1 is required to run the tests for this project. I eventually will add Maven package handling working.
+* JUnit 4.13.1 is required to run the tests for this project
+* system-rules is also required to run the tests and can be found here: https://github.com/stefanbirkner/system-rules
+
+I eventually will add Maven package handling working.
 
 ## ABOUT
 
