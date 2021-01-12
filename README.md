@@ -10,11 +10,15 @@ eccolwell99@gmail.com
 
 To run the program do the following command:
 
-java -jar path/to/jar/[todo build a jar]
+```java -jar path/to/jar/[todo build a jar]```
 
 This program also handles args similar to how UNIX commands do, with -h or --help or just h giving you a brief overview of what the program does.
 
-Eventually I hope to make this an application that opens a java application and eventually activly decode messages in real time, but thats is far off for now.
+Eventually I hope to make this an application that opens a java application and eventually actively decode messages in real time, but that is far off for now.
+
+### Dependencies
+
+JUnit 4.13.1 is required to run the tests for this project. I eventually will add Maven package handling working.
 
 ## ABOUT
 

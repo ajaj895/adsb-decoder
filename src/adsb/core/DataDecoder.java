@@ -42,7 +42,7 @@ public class DataDecoder extends Decode {
         Short tc = Short.parseShort(dataBin.substring(0, 5), 2);//the first 5 bits is the type code (tc)
         if(debug) System.out.print("Data decoding: \nTC: " + tc);
         if(debug) System.out.print("\n TC Substrings: Binary: " + dataBin.substring(0, 5) + " Decoded: " + Short.parseShort(dataBin.substring(0, 5), 2));
-        System.out.println(tc);//for testing purposes
+        if(debug) System.out.println(tc);//for testing purposes
         switch(tc){
             case 1://aircraft id 1-4
                 returnArr = airId(dataBin);

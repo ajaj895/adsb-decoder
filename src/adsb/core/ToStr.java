@@ -28,11 +28,15 @@ public class ToStr extends Decode {
         "0", "1", "2", "3", "4", "5", "6", "7",
         "8", "9", "#", "#", "#", "#", "#", "#"
     };
+
+    public static String toString(int[] data, boolean verbose) throws DatatypeFormatException {
+        return toString(data, verbose, false); // Port with a new argument.
+    }
     
-    public static String toString(int[] data, boolean verbose) throws DatatypeFormatException{
+    public static String toString(int[] data, boolean verbose, boolean debug) throws DatatypeFormatException{
         String str = "";//This is the string to be returned
         int tc = data[0];
-        System.out.println(tc);//for testing purposes
+        if(debug) System.out.println(tc);//for testing purposes
         switch(tc){
             case 1://aircraft id 1-4
                 str = airId(data, verbose);

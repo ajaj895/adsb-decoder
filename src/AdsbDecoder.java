@@ -3,6 +3,10 @@ import java.util.Scanner;
 import java.io.File;
 //import java.io.FileReader;
 import java.io.FileNotFoundException;
+
+import adsb.core.Adsb;
+import adsb.core.AdsbFormatException;
+import adsb.core.DatatypeFormatException;
 import adsb.core.Decode;
 //import adsb.core.DataDecoder;
 //import adsb.core.DatatypeFormatException;
@@ -68,7 +72,16 @@ public class AdsbDecoder {
                 for(int i = 1; i < args.length; i++){
                     adsbIn = args[i];
                     if(adsbIn.length() == 28){
-                        
+                        try { // TODO: Add debug checking
+                            Adsb adsb = new Adsb(adsbIn);
+                            System.out.println(adsb.toString(false)); //Prints out the non-detailed adsb message.
+                        } catch (AdsbFormatException e) {
+                            System.err.println("Error! ADS-B Format incorrect with message: " + adsbIn);
+                            System.err.println(e);
+                        } catch (DatatypeFormatException e) {
+                            System.err.println("Error! ADS-B Datatype format incorrect with the message: " + adsbIn);
+                            System.err.println(e);
+                        }
                     } else {
                         System.out.println("ADS-B length incorrect!");
                     }
