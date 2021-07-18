@@ -8,9 +8,17 @@ eccolwell99@gmail.com
 
 ## USAGE
 
-To run the program do the following command:
+To run the program do the following commands:
 
-```java -jar path/to/jar/[todo build a jar]```
+NOTE: You will need Maven to run the following commands and you need to run them in order.
+
+Navigate to the root folder that you just cloned (adsb-decoder/) and run:
+
+``` 
+mvn verify
+cd target/
+java -jar adsb-decoder-1.0-SNAPSHOT.jar
+```
 
 This program also handles args similar to how UNIX commands do, with -h or --help or just h giving you a brief overview of what the program does.
 
