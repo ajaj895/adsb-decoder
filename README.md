@@ -29,8 +29,6 @@ Eventually I hope to make this an application that opens a java application and 
 * JUnit 4.13.1 is required to run the tests for this project
 * system-rules is also required to run the tests and can be found here: https://github.com/stefanbirkner/system-rules
 
-I eventually will add Maven package handling working.
-
 ## ABOUT
 
 This project is work in progress ADS-B decoder for automated aircraft radio messages. At the moment, the project only decodes the downlink format (DF), capability (CA), and the ICAO address of the origin aircraft (a unique identifier of the origin aircraft and flight).
