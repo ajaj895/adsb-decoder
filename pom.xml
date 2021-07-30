@@ -16,10 +16,19 @@
     </properties>
 
     <dependencies>
+        <!-- JUnit 4.13 for Testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- System-Rules for JUnit -->
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
+            <version>1.19.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

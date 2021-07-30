@@ -15,7 +15,7 @@ import adsb.core.Decode;
  * This is the main class for adsb decoding.
  *
  * @author Evan Summer 2019
- * Updated: 7/13/2021
+ * Updated: 7/29/2021
  */
 public class AdsbDecoder {
 
@@ -80,9 +80,6 @@ public class AdsbDecoder {
         }
     }
 
-    /**
-     * Runs the GUI version of the program.
-     */
     /*
      * I am disabling this for now to focus on the algorithms.
      * I will reimplement it when the algorithm works reliably.
@@ -98,8 +95,8 @@ public class AdsbDecoder {
      * @param args An array of args from the main() program.
      */
     public static void file(String[] args){
-        File fileIn = null; // To prevent crashes if file doesn't exist
-        Scanner fileScan = null; // To prevent crashes if file doesn't exist
+        File fileIn; // To prevent crashes if file doesn't exist
+        Scanner fileScan; // To prevent crashes if file doesn't exist
 
         for(int i = 1; i < args.length; i++){ // Data transformation might be needed if using GNU_Radio
             fileIn = new File(args[i]);
@@ -173,7 +170,7 @@ public class AdsbDecoder {
                 + "\t-h, --help \tOPTION gets the help and usage of the decoder\n"
                 + "\t-i \t\tOPTION uses the interactive, commandline mode of the program\n"
                 + "\n"
-                + "NOTE: GUI mode is enabled by default, meaning that if no OPTIONS are inputted, the GUI will run.\n"
+                + "NOTE: CLI mode is enabled by default, meaning that if no OPTIONS are inputted, the CLI will run.\n"
                 + "\n"
                 + "For more information, refer to the readme on the github page: <https://github.com/ajaj895/adsb-decoder>\n"
                 + "\n";
