@@ -119,7 +119,7 @@ public class AdsbDecoder {
                 }
             } catch(FileNotFoundException e) {
                 System.err.println("Input file: "+ fileIn +(" not found, aborting..."));
-                System.exit(2);
+                System.exit(1);
             }
 
         }
