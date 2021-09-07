@@ -156,8 +156,8 @@ public class DataDecoder extends Decode {
     //Datatype 1-4
     private int[] airId(String binData){//pass in binary data
         int[] returnInt = new int[10];
-        returnInt[0] = Integer.parseInt(binData.substring(0, 5), 2);//TC from binary
-        returnInt[1] = Integer.parseInt(binData.substring(5, 8), 2);//EC for defining what aircraft type from binary
+        returnInt[0] = Integer.parseInt(binData.substring(0, 5), 2);    //TC from binary
+        returnInt[1] = Integer.parseInt(binData.substring(5, 8), 2);    //EC for defining what aircraft type from binary
         for(int i = 0; i < 8; i ++){
             returnInt[i+2] = Integer.parseInt(binData.substring((i*6)+8, ((i*6)+6)+8), 2);
         }
@@ -166,26 +166,62 @@ public class DataDecoder extends Decode {
     //DATATYPE 5-8
     private int[] surfPos(String binData){//pass in binary data
         //Feature to be implemented at a later date
-        int[] returnInt = new int[1];
-        System.out.println("Surface Position Feature to be implemented at a later date.");
+        int[] returnInt = new int[8];
+        returnInt[0] = Integer.parseInt(binData.substring(0, 5), 2);    // TC from binary. 5 bits.
+        returnInt[1] = Integer.parseInt(binData.substring(5, 12), 2);   // Speed encoded from 0-127 (7 Bits) 125-127 are reserved. 7 bits.
+        returnInt[2] = Integer.parseInt(binData.substring(12,13), 2);   // Ground track status (0 invalid, 1 valid). 1 bit.
+        returnInt[3] = Integer.parseInt(binData.substring(13, 20), 2);  // Ground track is the following formula x = (360n)/128 where n = the encoded value. 7 bits.
+        returnInt[4] = Integer.parseInt(binData.substring(20, 21), 2);  // Time. 1 bit.
+        returnInt[5] = Integer.parseInt(binData.substring(21, 22), 2);  // CPR Format (0 - Even frame, 1 - Odd frame). 1 bit.
+        returnInt[6] = Integer.parseInt(binData.substring(22, 39), 2);  // Encoded Latitude. 17 bits.
+        returnInt[7] = Integer.parseInt(binData.substring(39, 56), 2);  // Encoded Longitude. 17 bits.
+        //System.out.println("Surface Position Feature to be implemented at a later date.");
         return returnInt;
     }
     //DATATYPE 9-18
     private int[] airPosBaro(String binData){//binary pass in
-        int[] returnInt = new int[1];
-        System.out.println("Air Position Barometer Feature to be implemented at a later date.");
+        int[] returnInt = new int[8];
+        returnInt[0] = Integer.parseInt(binData.substring(0, 5), 2);    // TC from binary. 5 bits.
+        returnInt[1] = Integer.parseInt(binData.substring(5, 7), 2);    // Surveillance Status (0 - No condition, 1 - Permanent Alert, 2 - Temporary Alert, 3 - SPI condition). 2 bits.
+        returnInt[2] = Integer.parseInt(binData.substring(7, 8), 2);    // Single Antenna flag. 1 bit.
+        returnInt[3] = Integer.parseInt(binData.substring(8, 20), 2);   // Encoded Altitude. 12 bits.
+        returnInt[4] = Integer.parseInt(binData.substring(20, 21), 2);  // Time. 1 bit.
+        returnInt[5] = Integer.parseInt(binData.substring(21, 22), 2);  // CPR format (0 - Even Frame, 1 - Odd Frame). 1 bit.
+        returnInt[6] = Integer.parseInt(binData.substring(22, 39), 2);  // Encoded latitude. 17 bits.
+        returnInt[7] = Integer.parseInt(binData.substring(39, 56), 2);  // Encoded longitude. 17 bits.
+        //System.out.println("Air Position Barometer Feature to be implemented at a later date.");
         return returnInt;
     }
     //DATATYPE 19
     private int[] airVelo(String binData){
-        int[] returnInt = new int[1];
-        System.out.println("Air Velocity Feature to be implemented at a later date.");
+        int[] returnInt = new int[12];
+        returnInt[0] = Integer.parseInt(binData.substring(0, 5), 2);    // TC from binary. 5 bits.
+        returnInt[1] = Integer.parseInt(binData.substring(5, 8), 2);    // Sub-Type. 3 bits.
+        returnInt[2] = Integer.parseInt(binData.substring(8, 9), 2);    // Intent change flag. 1 bit.
+        returnInt[3] = Integer.parseInt(binData.substring(9, 10), 2);   // IFR capability flag. 1 bit.
+        returnInt[4] = Integer.parseInt(binData.substring(10, 13), 2);  // Navigation uncertainty category for velocity. 3 bits.
+        returnInt[5] = Integer.parseInt(binData.substring(13, 35), 2);  // Sub-type specific fields. 22 bits.
+        returnInt[6] = Integer.parseInt(binData.substring(35, 36), 2);  // Source bit for vertical rate. 1 bit.
+        returnInt[7] = Integer.parseInt(binData.substring(36, 37), 2);  // Sign bit for vertical rate. 1 bit.
+        returnInt[8] = Integer.parseInt(binData.substring(37, 46), 2);  // Vertical rate. 9 bits.
+        returnInt[9] = Integer.parseInt(binData.substring(46, 48), 2);  // Reserved. 2 bits.
+        returnInt[10] = Integer.parseInt(binData.substring(48, 49), 2); // Sign bit for GNSS and Baro Altitudes difference. 1 bit.
+        returnInt[11] = Integer.parseInt(binData.substring(49, 56), 2); // Difference between GNSS and Bara altitudes. 7 bits.
+        //System.out.println("Air Velocity Feature to be implemented at a later date.");
         return returnInt;
     }
     //DATATYPE 20-22
     private int[] airPosGnss(String binData){//binary pass
-        int[] returnInt = new int[1];
-        System.out.println("GNSS Air Position Feature to be implemented at a later date.");
+        int[] returnInt = new int[8];
+        returnInt[0] = Integer.parseInt(binData.substring(0, 5), 2);   // TC from binary. 5 bits.
+        returnInt[1] = Integer.parseInt(binData.substring(5, 7), 2);   // Surveillance Status (0 - No condition, 1 - Permanent Alert, 2 - Temporary Alert, 3 - SPI condition). 2 bits.
+        returnInt[2] = Integer.parseInt(binData.substring(7, 8), 2);   // Single Antenna flag. 1 bit.
+        returnInt[3] = Integer.parseInt(binData.substring(8, 20), 2);  // Encoded Altitude. 12 bits.
+        returnInt[4] = Integer.parseInt(binData.substring(20, 21), 2); // Time. 1 bit.
+        returnInt[5] = Integer.parseInt(binData.substring(21, 22), 2); // CPR format (0 - Even Frame, 1 - Odd Frame). 1 bit.
+        returnInt[6] = Integer.parseInt(binData.substring(22, 39), 2); // Encoded latitude. 17 bits.
+        returnInt[7] = Integer.parseInt(binData.substring(39, 56), 2); // Encoded longitude. 17 bits.
+        //System.out.println("GNSS Air Position Feature to be implemented at a later date.");
         return returnInt;
     }
     //DATATYPE 23-27 IS RESERVED 
@@ -209,10 +245,22 @@ public class DataDecoder extends Decode {
     /*
      * DATATYPE 30 IS UNKNOWN, AS OF THE 1090MHZ RIDDLE
      */
-    //DATATYPE 31
+    //DATATYPE 31 - This follows Version 1 and onward transponders.
     private int[] airOpStat(String binData){
-        int[] returnInt = new int[1];
-        System.out.println("Air Operation Statistics Feature to be implemented at a later date.");
+        int[] returnInt = new int[12];
+        returnInt[0] = Integer.parseInt(binData.substring(0, 5), 2);   // TC from binary. 5 bits.
+        returnInt[1] = Integer.parseInt(binData.substring(5, 8), 2);   // Sub-type code. 3 bits.
+        returnInt[2] = Integer.parseInt(binData.substring(8, 24), 2);  // Capacity class codes. 16 bits.
+        returnInt[3] = Integer.parseInt(binData.substring(24, 40), 2); // Operational mode codes. 16 bits.
+        returnInt[4] = Integer.parseInt(binData.substring(40, 43), 2); // ADS-B Version number. 3 bits.
+        returnInt[5] = Integer.parseInt(binData.substring(43, 44), 2); // NIC supplement. 1 bit.
+        returnInt[6] = Integer.parseInt(binData.substring(44, 48), 2); // Navigational accuracy category - position. 4 bits.
+        returnInt[7] = Integer.parseInt(binData.substring(48, 50), 2); // Barometric altitude quality. 2 bits.
+        returnInt[8] = Integer.parseInt(binData.substring(50, 52), 2); // Surveillance integrity level. 2 bits.
+        returnInt[9] = Integer.parseInt(binData.substring(52, 53), 2); // Barometric altitude integrity. 1 bit.
+        returnInt[10] = Integer.parseInt(binData.substring(53, 54), 2);// Horizontal Reference direction. 1 bit.
+        returnInt[11] = Integer.parseInt(binData.substring(54, 56), 2);// Reserved. 2 bits.
+        //System.out.println("Air Operation Statistics Feature to be implemented at a later date.");
         return returnInt;
     }
 
