@@ -17,20 +17,32 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket; //Needed for listening to Dump1090 ports
+import java.net.Socket;
 
 public class Dump1090Listener {
 
     final int portnum = 30002;
 
     private ServerSocket serverSock;
-    private PrintWriter printWriter;
-    private BufferedInputStream buffInStream;
+    private Socket clientSock;
+    private PrintWriter out;
+    private BufferedInputStream in;
+
 
 
     public Dump1090Listener() throws IOException {
 
-        serverSock = new ServerSocket(portnum);
+        init();
 
+    }
+
+
+    private void init() throws IOException {
+
+        serverSock = new ServerSocket(portnum); //Connects to the port number
+        clientSock = serverSock.accept(); //Client connects to the server
+        out = new PrintWriter(clientSock.getOutputStream(), true); //Gets the output from the client
+        in = new BufferedInputStream(clientSock.getInputStream()); //Gets the input to the client
 
     }
 }
