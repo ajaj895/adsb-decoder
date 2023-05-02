@@ -158,6 +158,117 @@ public class ToStr extends Decode {
         return returnStr;
     }
 
+    private static String surfPos(int[] data, boolean verbose){
+        /*
+        * Surface Position is broken up into eight categories 
+        * - Type Code - 5 bits
+        * - Movement - 7 bits
+        * - Status for Ground Track - 1 bit
+        * - Ground Track - 7 bits
+        * - Time - 1 bit
+        * - CPR Format - 1 bit
+        * - Encoded Latitude - 17 bits
+        * - Encoded Longitude - 17 bits
+        * ---- Total - 56 bits ----
+        * 
+        */
+        String returnStr = "";
+
+        if(verbose) System.out.println(returnStr);
+        return returnStr;
+    }
+
+    private static String airPosBaro(int[] data, boolean verbose){
+        /*
+        * Airborne Position is broken up into eight categories 
+        * - Type Code - 5 bits
+        * - Surveillance Status - 2 bits
+        * - Single Antenna Flag - 1 bit
+        * - Encoded Altitude - 12 bits
+        * - Time - 1 bit
+        * - CPR Format - 1 bit
+        * - Encoded Latitude - 17 bits
+        * - Encoded Longitude - 17 bits
+        * ---- Total - 56 bits ----
+        * 
+        */
+        String returnStr = "";
+
+        if(verbose) System.out.println(returnStr);
+        return returnStr;
+    }
+
+    private static String airVelo(int[] data, boolean verbose){
+        /*
+        * Airborne Velocity is broken up into twelve categories
+        * - Type Code - 5 bits
+        * - Sub Type - 3 bits
+        * - Intent Change Flag - 1 bit
+        * - IFR Capability Flag - 1 bit
+        * - Navigation Uncertainty Category for Velocity - 3 bits
+        * - Sub Type Specific Fields - 22 bits
+        * - Source Bit for Vertical Rate - 1 bit
+        * - Sign Bit for Vertical Rate - 1 bit
+        * - Vertical Rate - 9 bits
+        * - Reserved - 2 bits
+        * - Sign bit for GNSS and Baro Altitude Difference - 1 bit
+        * - Difference Between GNSS and Baro Altitudes - 7 bits
+        * ---- Total - 56 bits ----
+        */
+        String returnStr = "";
+
+        if(verbose) System.out.println(returnStr);
+        return returnStr;
+    }
+
+    private static String airPosGnss(int[] data, boolean verbose){
+        /*
+        * Airborne Position is broken up into eight categories 
+        * - Type Code - 5 bits
+        * - Surveillance Status - 2 bits
+        * - Single Antenna Flag - 1 bit
+        * - Encoded Altitude - 12 bits
+        * - Time - 1 bit
+        * - CPR Format - 1 bit
+        * - Encoded Latitude - 17 bits
+        * - Encoded Longitude - 17 bits
+        * ---- Total - 56 bits ----
+        * 
+        */
+        String returnStr = "";
+
+        if(verbose) System.out.println(returnStr);
+        return returnStr;
+    }
+
+    private static void reserved(){
+        //Figure this out later
+    }
+
+    private static String airStat(int[] data, boolean verbose){
+        
+        String returnStr = "";
+
+        if(verbose) System.out.println(returnStr);
+        return returnStr;
+    }
+
+    private static String targetStat(int[] data, boolean verbose){
+
+        String returnStr = "";
+
+        if(verbose) System.out.println(returnStr);
+        return returnStr;
+    }
+
+    private static String airOpStat(int[] data, boolean verbose){
+
+        String returnStr = "";
+
+        if(verbose) System.out.println(returnStr);
+        return returnStr;
+    }
+
     public static String testArr(int num){
         return idChars[num];
     }
